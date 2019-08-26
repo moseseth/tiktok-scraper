@@ -8,7 +8,9 @@ Inorder to mitigate scraping process, all database related operations run in the
 ##### Installation:
 
 ```
-cp .env.example .env // update DB_USERNAME & DB_PASSWORD & CREATE 'tiktok' database
+git clone https://github.com/moseseth/tiktok-scraper.git
+
+cp .env.example .env // update DB_USERNAME , DB_PASSWORD & CREATE 'tiktok' database
 
 composer install
 

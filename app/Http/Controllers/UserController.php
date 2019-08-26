@@ -10,10 +10,6 @@ use App\Transformers\VideoTransformer;
 use Illuminate\Http\Request;
 
 /**
- * Note: User gets profile and video feeds from tiktok on every request, nevertheless if for any case scraping was
- * not successful, database search will be activated and response will be forwarded to the requester(user) if the
- * search term gets a match in the database
- *
  * @package App\Http\Controllers
  */
 class UserController extends Controller
