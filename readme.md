@@ -1,11 +1,14 @@
-#### TikTok Scraper
+### TikTok Scraper™
 
 The following project implements domcrawler and concurrent data retrival from tiktok website. Once promises are 
 resolved, parses user and video related information and stores it to database for later consumption. 
 
 Inorder to mitigate scraping process, all database related operations run in the background as jobs.
+
+##### Installation:
+
 ```
-copy .env.example .env | _update it to your local setup_
+cp .env.example .env // update DB_USERNAME & DB_PASSWORD & CREATE 'tiktok' database
 
 composer install
 
@@ -16,13 +19,13 @@ php artisan serve
 php artisan queue:work --tries=3
 ``` 
 
-##### Unit Test:
+##### Run Test:
 ```$xslt
 composer run-script test
 ```
 
-##### Usage:
-  * _api/users?id=@manchester,@liverpool,@arsenal_
-  * _api/users/@liverpool/videos?id=3245673,8937482,323453_
+##### Usage Example:
+  * http://localhost:8000/api/users?id=@wilczewska,@realmadrid
+  * http://localhost:8000/api/users/@wilczewska/videos?id=6727979845919214853,6722754487129246982
 
 Glossary : `#PHP 7.2, #MySQL, #Queue, #Guzzle 6.0, #Lumen`

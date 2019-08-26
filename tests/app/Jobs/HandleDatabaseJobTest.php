@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Jobs\HandleDatabaseOperations;
+use App\models\User;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Faker\Factory as Faker;
 
@@ -19,7 +20,7 @@ class HandleDatabaseJobTest extends TestCase
         $this->expectsJobs(HandleDatabaseOperations::class);
 
         $this->users = [
-            'short_name' => $this->faker->firstName,
+            'short_name' => 'realmadrid',
             'full_name' => $this->faker->name,
             'is_verified' => $this->faker->boolean,
             'biography' => $this->faker->text,
@@ -35,8 +36,12 @@ class HandleDatabaseJobTest extends TestCase
     public function testHandlerDispatchedFromUserRoute()
     {
         dispatch(new HandleDatabaseOperations($this->users, null));
+
+        $this->beginDatabaseTransaction();
+        User::updateOrCreate(['short_name' => $this->users['short_name']], $this->users);
+
         $this->seeInDatabase('users', [
-            'is_verified' => false
+            'short_name' => 'realmadrid'
         ]);
     }
 
