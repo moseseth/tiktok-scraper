@@ -2,12 +2,9 @@
 
 namespace App\Services;
 
-use App\Jobs\HandleDatabaseOperations;
 use Campo\UserAgent;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
-use GuzzleHttp\Promise\EachPromise;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\DomCrawler\Crawler;
@@ -81,7 +78,6 @@ final class TikTokScraperService
             'concurrency' => 10,
             'fulfilled' => function (Response $response) use ($tiktokpath) {
                 if ($response->getStatusCode() == 200) {
-                    Log::info('YESSS', ['data' => (string)$response->getBody()]);
                     $crawler = new Crawler((string)$response->getBody());
 
                     $scrappedData = $crawler->filter('script')->reduce(function (Crawler $node, $i) {
@@ -223,7 +219,7 @@ final class TikTokScraperService
                 ($interval->i * 60) +
                 $interval->s;
         } catch (\Exception $e) {
-            Log::info($e->getMessage());
+            Log::info('[ISO8601ToSeconds conversion]', ['message' => $e->getMessage()]);
         }
 
         return 0;
