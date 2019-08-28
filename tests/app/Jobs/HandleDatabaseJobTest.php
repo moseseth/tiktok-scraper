@@ -4,11 +4,13 @@ declare(strict_types=1);
 use App\Jobs\HandleDatabaseOperations;
 use App\models\User;
 use App\models\Video;
+use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Faker\Factory as Faker;
 
 class HandleDatabaseJobTest extends TestCase
 {
+    use DatabaseMigrations;
     use DatabaseTransactions;
 
     protected $faker;
