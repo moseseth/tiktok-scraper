@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Campo\UserAgent;
+use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Response;
@@ -69,10 +70,10 @@ final class TikTokScraperService
 
     /**
      * @param string $tiktokpath
-     * @param string $requests
-     * @param $data
+     * @param Closure $requests
+     * @param array $data
      */
-    private function scrapeTikTok(string $tiktokpath, $requests, $data)
+    private function scrapeTikTok(string $tiktokpath, Closure $requests, array $data)
     {
         $pool = new Pool($this->client, $requests($data), [
             'concurrency' => 10,
