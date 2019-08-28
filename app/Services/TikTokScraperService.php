@@ -6,6 +6,7 @@ use Campo\UserAgent;
 use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
+use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\DomCrawler\Crawler;
@@ -208,10 +209,10 @@ final class TikTokScraperService
 
 
     /**
-     * @param $ISO8601
+     * @param string $ISO8601
      * @return int
      */
-    function ISO8601ToSeconds($ISO8601): int
+    function ISO8601ToSeconds(string $ISO8601): int
     {
         try {
             $interval = new \DateInterval($ISO8601);
@@ -220,7 +221,7 @@ final class TikTokScraperService
                 ($interval->i * 60) +
                 $interval->s;
         } catch (\Exception $e) {
-            Log::info('[ISO8601ToSeconds conversion]', ['message' => $e->getMessage()]);
+            Log::warning('[ISO8601ToSeconds]', ['message' => $e->getMessage()]);
         }
 
         return 0;
