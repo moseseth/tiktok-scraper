@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Jobs\HandleDatabaseOperations;
 use App\models\User;
+use App\models\Video;
 use Laravel\Lumen\Testing\DatabaseTransactions;
 use Faker\Factory as Faker;
 
@@ -49,7 +50,7 @@ class HandleDatabaseJobTest extends TestCase
     {
         $videos = [
             'video_id' => 6728320568954768646,
-            'uid' => $this->faker->userName,
+            'uid' => 'realmadrid',
             'url' => $this->faker->url,
             'background_image' => $this->faker->imageUrl(),
             'content_url' => $this->faker->image(),
@@ -61,6 +62,11 @@ class HandleDatabaseJobTest extends TestCase
         ];
 
         dispatch(new HandleDatabaseOperations($this->users, $videos, true));
+
+        $this->beginDatabaseTransaction();
+        $user =  User::updateOrCreate(['short_name' => $videos['uid']], $this->users);
+        $videos['user_id'] = $user->id;
+        Video::updateOrCreate(['video_id' => $videos['video_id']], $videos);
 
         $this->seeInDatabase('videos', [
             'video_id' => 6728320568954768646

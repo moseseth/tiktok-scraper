@@ -34,13 +34,15 @@ final class TikTokScraperService
      */
     public function extractUsers(array $userIds)
     {
-        $requests = function () use ($userIds) {
+        $requests = function ($userIds) {
             foreach ($userIds as $userId) {
-                yield new Request('GET', "/$userId");
+                yield $userId => function () use ($userId) {
+                    return $this->client->getAsync("/$userId");
+                };
             }
         };
 
-        $this->scrapeTikTok(config('tiktok.script_user_path'), $requests);
+        $this->scrapeTikTok(config('tiktok.script_user_path'), $requests, $userIds);
 
         return $this->userDetails;
     }
@@ -53,15 +55,17 @@ final class TikTokScraperService
      */
     public function extractVideos(string $userId, array $videoIds)
     {
-        $requests = function () use ($userId, $videoIds) {
+        $requests = function ($videoIds) use ($userId) {
             foreach ($videoIds as $videoId) {
                 if ((int)$videoId != 0) {
-                    yield new Request('GET', "/$userId/video/$videoId");
+                    yield $videoId => function () use ($userId, $videoId) {
+                        return $this->client->getAsync("/$userId/video/$videoId");
+                    };
                 }
             }
         };
 
-        $this->scrapeTikTok(config('tiktok.script_video_path'), $requests);
+        $this->scrapeTikTok(config('tiktok.script_video_path'), $requests, $videoIds);
 
         return $this->videoDetails;
     }
@@ -69,13 +73,15 @@ final class TikTokScraperService
     /**
      * @param string $tiktokpath
      * @param string $requests
+     * @param $data
      */
-    private function scrapeTikTok(string $tiktokpath, $requests)
+    private function scrapeTikTok(string $tiktokpath, $requests, $data)
     {
-        $pool = new Pool($this->client, $requests(100), [
-            'concurrency' => 5,
+        $pool = new Pool($this->client, $requests($data), [
+            'concurrency' => 10,
             'fulfilled' => function (Response $response) use ($tiktokpath) {
                 if ($response->getStatusCode() == 200) {
+                    Log::info('YESSS', ['data' => (string)$response->getBody()]);
                     $crawler = new Crawler((string)$response->getBody());
 
                     $scrappedData = $crawler->filter('script')->reduce(function (Crawler $node, $i) {
@@ -95,7 +101,7 @@ final class TikTokScraperService
                         $this->userDetails[] = array_merge($user, ['videos' => $videos]);
                     }
 
-                    if (!empty($enhancedVideoData['uniqueId'])) {
+                    if (!empty($enhancedVideoData['uniqueId']) && !empty($enhancedVideoData['itemInfos'])) {
                         $this->videoDetails[] = $this->getVideo($enhancedVideoData);
                     }
                 }
