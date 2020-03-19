@@ -22,7 +22,7 @@ class UserTransformer extends TransformerAbstract
             'thumbnail_image' => $user->avatar,
             'total' => [
                 'fans' => $user->fan_count,
-                'hearts' => $user->heart_count,
+                'hearts' => (int) $user->heart_count,
                 'followings' => $user->following_count,
                 'videos' => $user->video_count
             ]

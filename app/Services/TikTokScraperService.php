@@ -6,7 +6,6 @@ use Campo\UserAgent;
 use Closure;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
-use GuzzleHttp\Promise\Promise;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\DomCrawler\Crawler;
@@ -83,14 +82,11 @@ final class TikTokScraperService
                     $crawler = new Crawler((string)$response->getBody());
 
                     $scrappedData = $crawler->filter('script')->reduce(function (Crawler $node, $i) {
-                        return strpos($node->text(), 'window.__INIT_PROPS__') !== false;
+                        return strpos($node->attr('id'), '__NEXT_DATA__') !== false;
                     })->text();
-                    $cleanedUpData = preg_replace('/^window.__INIT_PROPS__[\s]=/', '',
-                        $scrappedData);
+                    $result = json_decode($scrappedData, true) ?? [];
 
-                    $result = json_decode($cleanedUpData, true) ?? [];
-
-                    [$userData, $videoListInPartial, $enhancedVideoData] = $this->getDataFromResult($tiktokpath,
+                    [$userData, $videoListInPartial, $enhancedVideoData] = $this->getDataFromResult('props',
                         $result);
 
                     if (!empty($userData)) {
@@ -126,7 +122,7 @@ final class TikTokScraperService
         $enhancedVideoData = null;
 
         if (array_key_exists($tiktokpath, $result)) {
-            $userData = $result[$tiktokpath]['userData'] ?? null;
+            $userData = $result[$tiktokpath]['pageProps']['userData'] ?? null;
             $videoListInPartial = $result[$tiktokpath]['itemList'] ?? null;
             $metaData = [
                 'uniqueId' => $result[$tiktokpath]['uniqueId'] ?? null,
