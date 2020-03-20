@@ -29,5 +29,10 @@ composer run-script test
 ##### Usage Example:
   * http://localhost:8000/api/users?id=@wilczewska,@realmadrid
   * http://localhost:8000/api/users/@wilczewska/videos?id=6727979845919214853,6722754487129246982
+  
+
+### Ongoing updates: 
+https://github.com/moseseth/tiktok-scraper/blob/master/CHANGELOG.md
+
 
 Glossary : `#PHP 7.2, #MySQL, #Queue, #Guzzle 6.0, #Lumen`
